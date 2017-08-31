@@ -39,10 +39,16 @@ app.all('/*', function(req, res, next) {
     else next()
 })
 
-var header = null;
-var data = [];
+var header = null
+var data = []
 function getData(callback) {
     var contestants;
+    var local_header = null
+    var local_data = []
+    header = null
+    data = []
+
+    data_sync = true
     redis.smembers('contestants', function(err, data) {
         contestants = data
         readHeader()
@@ -55,23 +61,26 @@ function getData(callback) {
                 res.send('Waiting...')
                 res.end()
             }
-            header = data
+            local_header = data
             readData()
         })
     }
 
     function readData() {
-        data = []
+        local_data = []
         var cnt = 0
         var size = contestants.length
+        if (contestants.length == 0) callback()
         for (var i in contestants)
             redis.hgetall(contestants[i], function(err, value) {
-                data.push(value) 
+                local_data.push(value) 
                 cnt++;
                 if (cnt == size) {
-                    for (var j in data)
-                        if (!data[j]) data.splice(j, 1)
-                    data.sort((x, y) => parseInt(x['score']) < parseInt(y['score']))
+                    for (var j in local_data)
+                        if (!local_data[j]) local_data.splice(j, 1)
+                    local_data.sort((x, y) => parseInt(x['score']) < parseInt(y['score']))
+                    data = local_data
+                    header = local_header
                     callback()
                 }
             })
@@ -89,7 +98,8 @@ app.post('/data_update', function(req, res, next) {
     res.end()
     if (!req.body['name']) return ;
     if (req.body['name'] == '_std') {
-        redis.del('header', redis.print, function() {
+        redis.del('header', function() {
+            console.log(req.body)
             redis.hmset('header', req.body, function() {
                 getData(function() {
                     data.sort((x, y) => parseInt(x['score']) < parseInt(y['score']))
@@ -104,6 +114,12 @@ app.post('/data_update', function(req, res, next) {
         redis.del('contestants', function() {
             var cnt = 0;
             var size = req.body['value'].length
+            if (size == 0) {
+                getData(function() {
+                    websocket.emit('c_hi', {data_header: header, data: data})
+                })
+            }
+
             for (i in req.body['value']) {
                 redis.sadd('contestants', req.body['value'][i], function() {
                     cnt++;
@@ -146,7 +162,11 @@ app.get('/picture', function (req, res, next) {
 var server = require('http').createServer(app)
 var io = require('socket.io')(server)
 var websocket = null;
-server.listen(80)
+server.listen(80, function() {
+    var host = server.address().address;
+    var port = server.address().port;
+    console.log('Listening at %s:%s', host, port)
+})
 io.on('connection', function(socket) {
     websocket = socket
     socket.on('hi', function(data) {
