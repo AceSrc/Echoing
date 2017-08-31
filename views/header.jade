@@ -1,0 +1,15 @@
+html
+  head
+    link(rel='stylesheet', href='css/spectre.css')
+    script(src='https://cdn.bootcss.com/vue/2.4.2/vue.min.js')
+    script(src='js/socket.io.js')
+    script(src='js/runtime.js')
+  body
+    header.navbar
+      section.navbar-section
+        a.btn.btn-link Gist
+        a.btn.btn-link Code
+      section.navbar-center
+    block content
+      //-- var socket = io.connect('localhost:80')
+      //-- socket.on('c_hi', function(msg) {alert(msg)})

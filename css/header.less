@@ -1,0 +1,34 @@
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  overflow: auto;
+}
+
+body {
+  margin: 0;
+}
+
+@tabwidth: auto;
+@background: #0099CC;
+.tabbar {
+  display: flex;
+  flex-flow: row wrap;
+  margin: 0;
+  justify-content: space-around;
+}
+
+.tabbar > .tab {
+  flex-grow: 1;
+  width: @tabwidth;
+  box-sizing: border-box;
+  background: gray;
+  color: white;
+  text-align: center;
+  &:hover {
+    background-color: @background;
+  }
+}
+
+
+}

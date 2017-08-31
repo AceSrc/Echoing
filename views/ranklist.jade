@@ -1,0 +1,10 @@
+table.table.table-striped.table-hover
+  thead.text-center.text-normal
+    tr
+      - for (var i in data_header)
+        th #{data_header[i]}
+  tbody.text-center
+    - for (var i in data)
+      tr
+        - for (var j in data_header)
+          td #{data[i][data_header[j]]}

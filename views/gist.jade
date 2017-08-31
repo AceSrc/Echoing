@@ -1,0 +1,9 @@
+extends header
+block content
+  link(rel='stylesheet', href='css/gist.css')
+  div.gist-container
+    - for (var i = 0; i < gist_number; i++) 
+      - if (result && result[i])
+        button.btn !{result[i]}
+      - else 
+        - break

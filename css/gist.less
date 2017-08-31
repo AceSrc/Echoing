@@ -1,0 +1,22 @@
+.gist-container {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-around;
+}
+
+@gist-block-width: 200px;
+@gist-block-height: @gist-block-width;
+@gist-block-background: #FFFFCC;
+.gist-block {
+  width: @gist-block-width;
+  height: @gist-block-height;
+  background-color: @gist-block-background;
+  margin-top: 10px;
+  padding: (@gist-block-width * 0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-color: white;
+  font-size: 16px;
+}
+
